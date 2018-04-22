@@ -154,6 +154,8 @@ export const ImageContainer = (props) =>{
     margin-bottom: 16px;
   `;
   const Image = styled.img`
+    height: 200px;
+    width: 200px;
   `;
   return(
     <Root>

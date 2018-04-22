@@ -205,14 +205,17 @@ export class User extends React.Component {
       "find host": {
         main: "配達員を探しています",
         sub: "ご注文受け付けました！",
+        img: "/flow01.jpg",
       },
       "macthing": {
         main: "ご自宅に向かっています",
         sub: "マッチングしました！",
+        img: "/flow0205.jpg",
       },
       "recieved": {
         main: "配送しています",
         sub: "受け取りました！",
+        img: "/flow03.jpg",
       }
     }
 
@@ -290,21 +293,41 @@ export class User extends React.Component {
     // 通信部分・これを定期で動かしたい？
 
     // pageStatusを通信してすべて更新{TODO}
-    this.setState({
-      pageStatus: 'requested',
-    });
+    // this.setState({
+    //   pageStatus: 'requested',
+    // });
     // baggageInfoも
 
 
   }
 
   submitAction() {
-    // postして、fetchPageStatus
-
+    fetch('https://alatte.azurewebsites.net/api/user/task', {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      mode: 'cors',
+      body: JSON.stringify({
+        userId: this.state.userId,
+        type: 1,
+      }),
+    }).then((res)=>{
+      res.text().then((restext) => {
+        console.log('text: ', restext);
+        const resobj = JSON.parse(restext);
+        console.log('res: ', resobj);
+        this.setState({
+          pageStatus: '0',
+          taskId: resobj.taskId
+        });
+      });
+    });
 
 
     this.fetchPageStatus();
-    console.log("Post data : ",this.state);
+    // console.log("Post data : ",this.state);
   }
 
   handleChangeCount = (count) => {
@@ -428,7 +451,7 @@ export class User extends React.Component {
           />
 
         <ImageContainer
-          src="http://placehold.jp/200x200.png"
+          src={this.messages[baggageInfo.status].img}
           />
 
         {baggageInfo.scheduleTime?
