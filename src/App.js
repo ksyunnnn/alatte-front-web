@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import './index.css'
+import {HashRouter, Switch, BrowserRouter as Router, Route, Link} from "react-router-dom";
 
-import { Header, Contents } from './components'
+import { Header, Contents, Home, User, Host, Signup } from './components'
 
 class App extends Component {
   constructor(props) {
@@ -10,17 +11,10 @@ class App extends Component {
    this.state = {
      users: [],
    }
-
-   this.pushUserAction = this.pushUserAction.bind(this);
  }
  fetchUserAllAction () {
 
  }
-
- pushUserAction(first,last,born) {
-
- }
-
  renderUsers() {
     // this.fetchUserAllAction().then(res => {
     //     this.setState({
@@ -44,8 +38,30 @@ class App extends Component {
         <Header />
         <Contents
           users={this.state.users}
-          pushUserAction={this.pushUserAction}
-          />
+          >
+          <Switch>
+              {[
+                {
+                  path: '/',
+                  component: Home,
+                },
+                {
+                  path: '/user/1',
+                  component: User,
+                },
+                {
+                  path: '/host/1',
+                  component: Host,
+                },
+                {
+                  path: '/signup',
+                  component: Signup,
+                },
+              ].map((v,i) => {
+                return <Route key={i} exact path={v.path} component={v.component} />;
+              })}
+          </Switch>
+        </Contents>
       </div>
     );
   }
