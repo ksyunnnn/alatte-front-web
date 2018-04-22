@@ -2,6 +2,20 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { withRouter } from 'react-router';
 
+import {
+  CountSelect,
+  CountSelectWrapper,
+  Label,
+  DefaultTitle,
+  Reservation,
+  StyledReservationInputWrap,
+  GenderWrapper,
+  RequestButton,
+  MessageContainer,
+  ImageContainer,
+  ScheduleTime,
+} from './customComponents'
+
 /*
     [Must]機能としてのコンポーネントと、スタイルとしてのコンポーネントをしっかり区別する
 */
@@ -19,7 +33,7 @@ const Colors = {
 }
 
 const DefaultContainer = styled.div`
-    padding: 0 120px;
+    padding: 0 16px;
 `;
 
 const Input = styled.input`
@@ -34,28 +48,19 @@ const Input = styled.input`
   font-size: .8rem;
 `;
 
-const Card = styled.div`
-  padding: 10px;
-  width: 240px;
-  box-sizing: border-box;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 4px;
-`;
-
 const Anchor = styled.a`
   color: inherit;
   text-decoration: none;
 `;
 
 const Form = styled.div`
-    margin: 0 auto;
-    width: 240px;
 `;
 
 const Select = styled.select`
     border-radius: 0;
     border: 0;
     margin: 0;
-    padding: 1rem;
+    padding: 0 .2rem;
     border:1px solid ${Colors.gray};
     background: ${Colors.white};
     height: 30px;
@@ -63,6 +68,14 @@ const Select = styled.select`
     width: 100%;
     box-sizing: border-box;
     font-size: .8rem;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 0;
+    background: none transparent;
+    vertical-align: middle;
+    font-size: inherit;
+    color: inherit;
 `;
 const Button = styled.button`
     box-shadow: 0 2px 5px 0 rgba(0,0,0,0.26);
@@ -83,9 +96,8 @@ const Button = styled.button`
 }
 `;
 
-const CardWrapper = Card.extend`
-    width: 480px;
-    margin: 0 auto;
+const Wrapper = styled.div`
+    width: 100%;
 `;
 
 export class Home  extends React.Component {
@@ -143,8 +155,8 @@ export class Signup extends React.Component {
   render(){
     return (
       <div>
-        User View!!!!!<br /><br />
-        <CardWrapper>
+        login View!!!!!<br /><br />
+        <Wrapper>
           <Form>
             <Input name="id" placeholder="your id" onChange={this.onKeyChange} value={this.state.id} />
             <br /><br />
@@ -179,7 +191,7 @@ export class Signup extends React.Component {
               Submit
             </Button>
           </Form>
-        </CardWrapper>
+        </Wrapper>
       </div>
     );
   }
@@ -188,21 +200,44 @@ export class Signup extends React.Component {
 export class User extends React.Component {
   constructor(props) {
     super(props);
+
+    this.messages = {
+      "find host": {
+        main: "配達員を探しています",
+        sub: "ご注文受け付けました！",
+      },
+      "macthing": {
+        main: "ご自宅に向かっています",
+        sub: "マッチングしました！",
+      },
+      "recieved": {
+        main: "配送しています",
+        sub: "受け取りました！",
+      }
+    }
+
     this.state = {
       currentId: '',
       requestInfo: {
         type: "",
-        count: "",
+        count: "1",
         place: "home",
+        month: "4",
+        date: "22",
+        time: "17",
+        gender: "free",
       },
       baggageInfo: {
-        status: "受け取り待ち",
+        status: "find host",
         map: "",
+        scheduleTime: "15:00",
       },
       pageStatus: "before req",
     };
-    this.fetchPageStatus();
     this.onKeyChange = this.onKeyChange.bind(this);
+  }
+  componentDidMount() {
+    this.fetchPageStatus();
   }
 
   onKeyChange(e) {
@@ -226,55 +261,161 @@ export class User extends React.Component {
           requestInfo: requestInfoCopy,
         });
         break
+      case "month":
+        requestInfoCopy['month'] = e.target.value;
+        this.setState({
+          requestInfo: requestInfoCopy,
+        });
+        break
+      case "date":
+        requestInfoCopy['date'] = e.target.value;
+        this.setState({
+          requestInfo: requestInfoCopy,
+        });
+        break
+      case "time":
+        requestInfoCopy['time'] = e.target.value;
+        this.setState({
+          requestInfo: requestInfoCopy,
+        });
+        break
+      case "gender":
+        requestInfoCopy['gender'] = e.target.value;
+        this.setState({
+          requestInfo: requestInfoCopy,
+        });
+        break
     }
   }
   fetchPageStatus() {
-    // pageStatusを通信して更新{TODO}
+    // 通信部分・これを定期で動かしたい？
+
+    // pageStatusを通信してすべて更新{TODO}
     this.setState({
       pageStatus: 'requested',
     });
+    // baggageInfoも
+
+
   }
 
-  submitAction(isFrom) {
+  submitAction() {
     // postして、fetchPageStatus
+
+
+
     this.fetchPageStatus();
-    console.log("isFrom:",isFrom);
+    console.log("Post data : ",this.state);
+  }
+
+  handleChangeCount = (count) => {
+    let requestInfoCopy = this.state.requestInfo;
+    requestInfoCopy['count'] = count;
+    this.setState({
+      requestInfo: requestInfoCopy,
+    });
   }
 
   renderRequestForm() {
     return (
       <Form>
-        <Input name="type" placeholder="種別" onChange={this.onKeyChange} value={this.state.requestInfo.type} />
-        <br /><br />
-        <Input name="count" placeholder="個数" onChange={this.onKeyChange} value={this.state.requestInfo.count} />
+        <DefaultTitle>予約する</DefaultTitle>
+        <Label>洗濯バック個数</Label>
+        <CountSelectWrapper>
+          <CountSelect
+            selected={this.state.requestInfo.count === "1"}
+            text="1"
+            onClick={() => this.handleChangeCount(1)}
+            />
+          <CountSelect
+            selected={this.state.requestInfo.count === "2"}
+            text="2"
+            onClick={() => this.handleChangeCount(2)}
+            />
+          <CountSelect
+            selected={this.state.requestInfo.count === "3"}
+            text="3"
+            onClick={() => this.handleChangeCount(3)}
+            />
+        </CountSelectWrapper>
 
-        <br /><br />
-        <Select
-          name="place"
-          value={this.state.requestInfo.place}
-          onChange={this.onKeyChange}
-        >
+        <Label>予約時間</Label>
+        <Reservation>
+          <StyledReservationInputWrap unit="月">
+            <Select
+              name="month"
+              value={this.state.requestInfo.month}
+              onChange={this.onKeyChange}
+            >
+              {Array.from(new Array(12)).map((v,i)=>{
+                return (
+                  <option key={i} value={i+1}>{i+1}</option>
+                );
+            })}
+            </Select>
+          </StyledReservationInputWrap>
+
+          <StyledReservationInputWrap unit="日">
+            <Select
+              name="date"
+              value={this.state.requestInfo.date}
+              onChange={this.onKeyChange}
+            >
+              {Array.from(new Array(30)).map((v,i)=>{
+                return (
+                  <option key={i} value={i+1}>{i+1}</option>
+                );
+            })}
+            </Select>
+          </StyledReservationInputWrap>
+
+          <StyledReservationInputWrap unit="時">
+            <Select
+              name="time"
+              value={this.state.requestInfo.time}
+              onChange={this.onKeyChange}
+            >
+              {Array.from(new Array(24)).map((v,i)=>{
+                return (
+                  <option key={i} value={i+1}>{i+1}</option>
+                );
+            })}
+            </Select>
+          </StyledReservationInputWrap>
+
+        </Reservation>
+
+        <Label>配達員の性別</Label>
+        <GenderWrapper>
+          <Select
+            name="time"
+            value={this.state.requestInfo.time}
+            onChange={this.onKeyChange}
+          >
           {[
             {
-            text: "自宅",
-            value: "home",
+            text: "おまかせ",
+            value: "free",
           },
           {
-            text: "コンビニ",
-            value: "store",
+            text: "女性のみ",
+            value: "only-women",
           }
         ].map((v,i)=>{
           return (
-            <option key={i} value={v.value}>{v.text}</option>
+            <option key={i}>{v.text}</option>
           );
         })}
-        </Select>
+          </Select>
+        </GenderWrapper>
 
-        <Button
-          onClick={()=>{this.submitAction('from req')}}
+
+
+        <RequestButton
+          onClick={()=>{this.submitAction()}}
           >
-          Submit
-        </Button>
+          決定
+        </RequestButton>
       </Form>
     );
   }
@@ -283,8 +424,18 @@ export class User extends React.Component {
     const { baggageInfo } = this.state;
     return (
       <div>
-        Staus
-        <h2>{baggageInfo.status}</h2>
+        <MessageContainer
+          message={this.messages[baggageInfo.status]}
+          />
+
+        <ImageContainer
+          src="http://placehold.jp/200x200.png"
+          />
+
+        {baggageInfo.scheduleTime?
+          <ScheduleTime time={baggageInfo.scheduleTime} />
+          :""
+        }
       </div>
     );
   }
@@ -292,10 +443,9 @@ export class User extends React.Component {
   render(){
     return (
       <div>
-        User<br /><br />
-        <CardWrapper>
+        <Wrapper>
           {this.state.pageStatus=='before req'?this.renderRequestForm():this.renderStatusView()}
-        </CardWrapper>
+        </Wrapper>
       </div>
     );
   }
@@ -376,7 +526,6 @@ export const Contents = (props) => {
       background: ${Colors.white}
       padding-top: ${Heights.header*2}px;
       box-sizing: border-box;
-      text-align: center;
   `;
 
   return (
