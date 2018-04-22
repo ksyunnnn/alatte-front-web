@@ -217,7 +217,7 @@ export class User extends React.Component {
     }
 
     this.state = {
-      currentId: '',
+      currentUserId: '1',
       requestInfo: {
         type: "",
         count: "1",
@@ -450,57 +450,6 @@ export class User extends React.Component {
     );
   }
 }
-
-
-export class Host  extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      id: '',
-      pass: '',
-    };
-    this.onKeyChange = this.onKeyChange.bind(this);
-  }
-
-  onKeyChange(e) {
-    switch (e.target.name) {
-      case "id":
-        this.setState({
-          id: e.target.value,
-        });
-        break
-      case "pass":
-        this.setState({
-          pass: e.target.value,
-        });
-        break
-    }
-  }
-
-  loginAction(v) {
-     console.log("loginAction",v);
-  }
-
-  render(){
-    return (
-      <div>
-        <Form>
-          <Input name="id" placeholder="your id" onChange={this.onKeyChange} value={this.state.id} />
-          <br /><br />
-          <Input name="pass" placeholder="your pass." onChange={this.onKeyChange} value={this.state.pass} />
-
-
-          <Button
-            onClick={()=>{this.loginAction(this.state)}}
-            >
-            Submit
-          </Button>
-        </Form>
-      </div>
-    );
-  }
-}
-
 
 export const Header = (props) => {
   const Root = DefaultContainer.extend`

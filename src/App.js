@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import './index.css'
 import {HashRouter, Switch, BrowserRouter as Router, Route, Link} from "react-router-dom";
 
-import { Header, Contents, Home, User, Host, Signup } from './components'
+import { Header, Contents, Home, User, Signup } from './components';
+import Host from './Host';
 
 class App extends Component {
   constructor(props) {
