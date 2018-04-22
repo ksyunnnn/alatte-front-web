@@ -21,7 +21,7 @@ import {
 */
 
 const Heights = {
-  header: '40',
+  header: '64',
   contens: '100vh',
   form: '480',
 }
@@ -29,7 +29,7 @@ const Heights = {
 const Colors = {
   white: '#fff',
   gray: '#eee',
-  blue: '#4C9CD0',
+  blue: '#549eed',
 }
 
 const DefaultContainer = styled.div`
@@ -56,7 +56,7 @@ const Anchor = styled.a`
 const Form = styled.div`
 `;
 
-const Select = styled.select`
+export const Select = styled.select`
     border-radius: 0;
     border: 0;
     margin: 0;
@@ -228,11 +228,10 @@ export class User extends React.Component {
         gender: "free",
       },
       baggageInfo: {
-        status: "find host",
+        status: "",
         map: "",
         scheduleTime: "15:00",
       },
-      pageStatus: "before req",
     };
     this.onKeyChange = this.onKeyChange.bind(this);
   }
@@ -444,7 +443,7 @@ export class User extends React.Component {
     return (
       <div>
         <Wrapper>
-          {this.state.pageStatus=='before req'?this.renderRequestForm():this.renderStatusView()}
+          {this.state.baggageInfo.status==''?this.renderRequestForm():this.renderStatusView()}
         </Wrapper>
       </div>
     );
@@ -460,10 +459,17 @@ export const Header = (props) => {
       position: fixed;
       width: 100%;
       box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      padding-top: 17px;
+  `;
+  const Img = styled.img`
+      width: 90px;
+      height: 30px;
   `;
   return (
     <Root>
-      Alatte
+      <Img src="/alatte_logo.svg" />
     </Root>
   );
 }
